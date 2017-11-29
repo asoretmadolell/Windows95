@@ -1,14 +1,14 @@
-/* Processing WM_CHAR messages. */
+/* Processing WM_PAINT messages. */
 
 #include <Windows.h>
+//#include <string.h>
 #include <stdio.h>
-#include <string.h>
 
 LRESULT CALLBACK WindowFunc( HWND, UINT, WPARAM, LPARAM );
 
 char szWinName[] = "MyWin"; /* name of window class */
 
-char str[ 80 ] = ""; /* holds output string */
+char str[ 80 ] = "Sample Output"; /* holds output string */
 
 int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, int nWinMode )
 {
@@ -38,7 +38,7 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
     /* Now that a window class has been registered, a window can be created. */
     hwnd = CreateWindow(
         szWinName, /* name of window class */
-        "Processing WM_CHAR messages", /* title */
+        "Processing WM_PAINT messages", /* title */
         WS_OVERLAPPEDWINDOW, /* window style - normal */
         CW_USEDEFAULT, /* X coordinate - let Windows decide */
         CW_USEDEFAULT, /* Y coordinate - let Windows decide */
@@ -68,6 +68,7 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
 LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
     HDC hdc;
+    PAINTSTRUCT paintstruct;
 
     switch( message )
     {
@@ -77,6 +78,11 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
             sprintf( str, "%c", (char)wParam ); /* stringize character */
             TextOut( hdc, 1, 1, str, strlen( str ) ); /* output char */
             ReleaseDC( hwnd, hdc ); /* release device context */
+            break;
+        case WM_PAINT: /* process a repaint request */
+            hdc = BeginPaint( hwnd, &paintstruct ); /* get DC */
+            TextOut( hdc, 1, 1, str, strlen( str ) ); /* output string */
+            EndPaint( hwnd, &paintstruct ); /* release DC */
             break;
         case WM_DESTROY: /* terminate the program */
             PostQuitMessage( 0 );
