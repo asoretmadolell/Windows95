@@ -1,8 +1,9 @@
-/* A Windows skeleton that routes all output through the WM_PAINT message. */
+/* A clock program. */
 
 #include <Windows.h>
 //#include <string.h>
 #include <stdio.h>
+#include <time.h>
 
 LRESULT CALLBACK WindowFunc( HWND, UINT, WPARAM, LPARAM );
 
@@ -40,7 +41,7 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
     /* Now that a window class has been registered, a window can be created. */
     hwnd = CreateWindow(
         szWinName, /* name of window class */
-        "Routing Output Through WM_PAINT", /* title */
+        "Clock", /* title */
         WS_OVERLAPPEDWINDOW, /* window style - normal */
         CW_USEDEFAULT, /* X coordinate - let Windows decide */
         CW_USEDEFAULT, /* Y coordinate - let Windows decide */
@@ -54,6 +55,10 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
 
     /* Display the window. */
     ShowWindow( hwnd, nWinMode );
+
+    /* start a timer - interrupt once per second */
+    SetTimer( hwnd, 1, 1000, NULL );
+
     UpdateWindow( hwnd );
 
     /* Create the message loop. */
@@ -62,6 +67,9 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
         TranslateMessage( &msg ); /* allow use of keyboard */
         DispatchMessage( &msg ); /* return control to Windows */
     }
+
+    KillTimer( hwnd, 1 ); /* stop the timer */
+
     return msg.wParam;
 }
 
@@ -71,30 +79,25 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 {
     HDC hdc;
     PAINTSTRUCT paintstruct;
+    struct tm* newtime;
+    time_t t;
 
     switch( message )
     {
-        case WM_CHAR: /* process keystroke */
-            X = Y = 1; /* display chars in upper left corner */
-            sprintf( str, "%c", (char)wParam ); /* stringize character */
-            InvalidateRect( hwnd, NULL, 1 ); /* paint the screen */
-            break;
         case WM_PAINT: /* process a repaint request */
             hdc = BeginPaint( hwnd, &paintstruct ); /* get DC */
             TextOut( hdc, X, Y, str, strlen( str ) ); /* output string */
             EndPaint( hwnd, &paintstruct ); /* release DC */
             break;
-        case WM_RBUTTONDOWN: /* process right button */
-            strcpy( str, "Right button is down." );
-            X = LOWORD( lParam ); /* set X,Y to current */
-            Y = HIWORD( lParam ); /* mouse location */
-            InvalidateRect( hwnd, NULL, 1 ); /* paint the screen */
-            break;
-        case WM_LBUTTONDOWN: /* process left button */
-            strcpy( str, "Left button is down." );
-            X = LOWORD( lParam ); /* set X,Y to current */
-            Y = HIWORD( lParam ); /* mouse location */
-            InvalidateRect( hwnd, NULL, 1 ); /* paint the screen */
+        case WM_TIMER: /* timer went off */
+            /* get the new time */
+            t = time( NULL );
+            newtime = localtime( &t );
+
+            /* display the new time */
+            strcpy( str, asctime( newtime ) );
+            str[ strlen( str ) - 1 ] = '\0'; /* remove /r/n */
+            InvalidateRect( hwnd, NULL, 0 ); /* update screen */
             break;
         case WM_DESTROY: /* terminate the program */
             PostQuitMessage( 0 );
