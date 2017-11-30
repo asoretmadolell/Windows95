@@ -1,4 +1,4 @@
-/* Processing Mouse Messages. */
+/* A Windows skeleton that routes all output through the WM_PAINT message. */
 
 #include <Windows.h>
 //#include <string.h>
@@ -9,6 +9,8 @@ LRESULT CALLBACK WindowFunc( HWND, UINT, WPARAM, LPARAM );
 char szWinName[] = "MyWin"; /* name of window class */
 
 char str[ 80 ] = "Sample Output"; /* holds output string */
+
+int X = 1, Y = 1; /* screen location */
 
 int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, int nWinMode )
 {
@@ -38,7 +40,7 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
     /* Now that a window class has been registered, a window can be created. */
     hwnd = CreateWindow(
         szWinName, /* name of window class */
-        "Processing Mouse Messages", /* title */
+        "Routing Output Through WM_PAINT", /* title */
         WS_OVERLAPPEDWINDOW, /* window style - normal */
         CW_USEDEFAULT, /* X coordinate - let Windows decide */
         CW_USEDEFAULT, /* Y coordinate - let Windows decide */
@@ -73,28 +75,26 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
     switch( message )
     {
         case WM_CHAR: /* process keystroke */
-            hdc = GetDC( hwnd ); /* get device context */
-            TextOut( hdc, 1, 1, " ", 2 ); /* erase old character */
+            X = Y = 1; /* display chars in upper left corner */
             sprintf( str, "%c", (char)wParam ); /* stringize character */
-            TextOut( hdc, 1, 1, str, strlen( str ) ); /* output char */
-            ReleaseDC( hwnd, hdc ); /* release device context */
+            InvalidateRect( hwnd, NULL, 1 ); /* paint the screen */
             break;
         case WM_PAINT: /* process a repaint request */
             hdc = BeginPaint( hwnd, &paintstruct ); /* get DC */
-            TextOut( hdc, 1, 1, str, strlen( str ) ); /* output string */
+            TextOut( hdc, X, Y, str, strlen( str ) ); /* output string */
             EndPaint( hwnd, &paintstruct ); /* release DC */
             break;
-        case WM_RBUTTONDOWN:
-            hdc = GetDC( hwnd );
+        case WM_RBUTTONDOWN: /* process right button */
             strcpy( str, "Right button is down." );
-            TextOut( hdc, LOWORD( lParam ), HIWORD( lParam ), str, strlen( str ) );
-            ReleaseDC( hwnd, hdc );
+            X = LOWORD( lParam ); /* set X,Y to current */
+            Y = HIWORD( lParam ); /* mouse location */
+            InvalidateRect( hwnd, NULL, 1 ); /* paint the screen */
             break;
-        case WM_LBUTTONDOWN:
-            hdc = GetDC( hwnd );
+        case WM_LBUTTONDOWN: /* process left button */
             strcpy( str, "Left button is down." );
-            TextOut( hdc, LOWORD( lParam ), HIWORD( lParam ), str, strlen( str ) );
-            ReleaseDC( hwnd, hdc );
+            X = LOWORD( lParam ); /* set X,Y to current */
+            Y = HIWORD( lParam ); /* mouse location */
+            InvalidateRect( hwnd, NULL, 1 ); /* paint the screen */
             break;
         case WM_DESTROY: /* terminate the program */
             PostQuitMessage( 0 );
