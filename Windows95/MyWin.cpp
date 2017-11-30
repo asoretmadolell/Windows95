@@ -1,4 +1,4 @@
-/* Processing WM_PAINT messages. */
+/* Processing Mouse Messages. */
 
 #include <Windows.h>
 //#include <string.h>
@@ -38,7 +38,7 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
     /* Now that a window class has been registered, a window can be created. */
     hwnd = CreateWindow(
         szWinName, /* name of window class */
-        "Processing WM_PAINT messages", /* title */
+        "Processing Mouse Messages", /* title */
         WS_OVERLAPPEDWINDOW, /* window style - normal */
         CW_USEDEFAULT, /* X coordinate - let Windows decide */
         CW_USEDEFAULT, /* Y coordinate - let Windows decide */
@@ -83,6 +83,18 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
             hdc = BeginPaint( hwnd, &paintstruct ); /* get DC */
             TextOut( hdc, 1, 1, str, strlen( str ) ); /* output string */
             EndPaint( hwnd, &paintstruct ); /* release DC */
+            break;
+        case WM_RBUTTONDOWN:
+            hdc = GetDC( hwnd );
+            strcpy( str, "Right button is down." );
+            TextOut( hdc, LOWORD( lParam ), HIWORD( lParam ), str, strlen( str ) );
+            ReleaseDC( hwnd, hdc );
+            break;
+        case WM_LBUTTONDOWN:
+            hdc = GetDC( hwnd );
+            strcpy( str, "Left button is down." );
+            TextOut( hdc, LOWORD( lParam ), HIWORD( lParam ), str, strlen( str ) );
+            ReleaseDC( hwnd, hdc );
             break;
         case WM_DESTROY: /* terminate the program */
             PostQuitMessage( 0 );
