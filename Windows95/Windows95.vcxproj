@@ -65,7 +65,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MyWin.cpp" />
+    <ClCompile Include="MENU.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MENU.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="menu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

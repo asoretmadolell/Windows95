@@ -1,0 +1,23 @@
+﻿; Sample menu resource file.
+#include "menu.h"
+
+MYMENU MENU
+{
+    POPUP "&One"
+    {
+        MENUITEM "&Alpha", IDM_ALPHA
+        MENUITEM "&Beta", IDM_BETA
+    }
+    POPUP "&Two"
+    {
+        MENUITEM "&Gamma", IDM_GAMMA
+        POPUP "&Delta"
+        {
+            MENUITEM "&Epsilon", IDM_EPSILON
+            MENUITEM "&Zeta", IDM_ZETA
+        }
+        MENUITEM "&Eta", IDM_ETA
+        MENUITEM "&Theta", IDM_THETA
+    }
+    MENUITEM "&Help", IDM_HELP
+}
