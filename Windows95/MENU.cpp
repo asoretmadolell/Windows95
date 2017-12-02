@@ -1,4 +1,4 @@
-/* Demonstrate menus. */
+/* Process accelerator keys. */
 
 #include <Windows.h>
 //#include <string.h>
@@ -14,6 +14,7 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
     HWND hwnd;
     MSG msg;
     WNDCLASS wcl;
+    HACCEL hAccel;
 
     /* Define a window class. */
     wcl.hInstance = hThisInst; /* handle to this instance */
@@ -51,6 +52,9 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
         NULL /* no additional arguments */
         );
 
+    /* load the keyboard accelerators */
+    hAccel = LoadAccelerators( hThisInst, "MYMENU" );
+
     /* Display the window. */
     ShowWindow( hwnd, nWinMode );
     UpdateWindow( hwnd );
@@ -58,8 +62,11 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
     /* Create the message loop. */
     while( GetMessage( &msg, NULL, 0, 0 ) )
     {
-        TranslateMessage( &msg ); /* allow use of keyboard */
-        DispatchMessage( &msg ); /* return control to Windows */
+        if( !TranslateAccelerator( hwnd, hAccel, &msg ) )
+        {
+            TranslateMessage( &msg ); /* allow use of keyboard */
+            DispatchMessage( &msg ); /* return control to Windows */
+        }
     }
 
     return msg.wParam;
