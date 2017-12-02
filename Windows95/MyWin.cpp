@@ -1,17 +1,12 @@
-/* A clock program. */
+/* Demonstrate a Message Box. */
 
 #include <Windows.h>
 //#include <string.h>
 #include <stdio.h>
-#include <time.h>
 
 LRESULT CALLBACK WindowFunc( HWND, UINT, WPARAM, LPARAM );
 
 char szWinName[] = "MyWin"; /* name of window class */
-
-char str[ 80 ] = "Sample Output"; /* holds output string */
-
-int X = 1, Y = 1; /* screen location */
 
 int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, int nWinMode )
 {
@@ -41,7 +36,7 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
     /* Now that a window class has been registered, a window can be created. */
     hwnd = CreateWindow(
         szWinName, /* name of window class */
-        "Clock", /* title */
+        "Using Message Boxes", /* title */
         WS_OVERLAPPEDWINDOW, /* window style - normal */
         CW_USEDEFAULT, /* X coordinate - let Windows decide */
         CW_USEDEFAULT, /* Y coordinate - let Windows decide */
@@ -55,10 +50,6 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
 
     /* Display the window. */
     ShowWindow( hwnd, nWinMode );
-
-    /* start a timer - interrupt once per second */
-    SetTimer( hwnd, 1, 1000, NULL );
-
     UpdateWindow( hwnd );
 
     /* Create the message loop. */
@@ -68,8 +59,6 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
         DispatchMessage( &msg ); /* return control to Windows */
     }
 
-    KillTimer( hwnd, 1 ); /* stop the timer */
-
     return msg.wParam;
 }
 
@@ -77,27 +66,36 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
 
 LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
-    HDC hdc;
-    PAINTSTRUCT paintstruct;
-    struct tm* newtime;
-    time_t t;
+    int response;
 
     switch( message )
     {
-        case WM_PAINT: /* process a repaint request */
-            hdc = BeginPaint( hwnd, &paintstruct ); /* get DC */
-            TextOut( hdc, X, Y, str, strlen( str ) ); /* output string */
-            EndPaint( hwnd, &paintstruct ); /* release DC */
+        case WM_RBUTTONDOWN: /* process right button */
+            response = MessageBox( hwnd, "Press One:", "Right Button", MB_ABORTRETRYIGNORE );
+            switch( response )
+            {
+                case IDABORT:
+                    MessageBox( hwnd, "", "Abort", MB_OK );
+                    break;
+                case IDRETRY:
+                    MessageBox( hwnd, "", "Retry", MB_OK );
+                    break;
+                case IDIGNORE:
+                    MessageBox( hwnd, "", "Ignore", MB_OK );
+                    break;
+            }
             break;
-        case WM_TIMER: /* timer went off */
-            /* get the new time */
-            t = time( NULL );
-            newtime = localtime( &t );
-
-            /* display the new time */
-            strcpy( str, asctime( newtime ) );
-            str[ strlen( str ) - 1 ] = '\0'; /* remove /r/n */
-            InvalidateRect( hwnd, NULL, 0 ); /* update screen */
+        case WM_LBUTTONDOWN: /* process left button */
+            response = MessageBox( hwnd, "Continue?", "Left Button", MB_ICONHAND | MB_YESNO );
+            switch( response )
+            {
+                case IDYES:
+                    MessageBox( hwnd, "Press Button", "Yes", MB_OK );
+                    break;
+                case IDNO:
+                    MessageBox( hwnd, "Press Button", "No", MB_OK );
+                    break;
+            }
             break;
         case WM_DESTROY: /* terminate the program */
             PostQuitMessage( 0 );
