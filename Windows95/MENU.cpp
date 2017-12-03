@@ -108,6 +108,7 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                     MessageBox( hwnd, "No Help", "Help", MB_OK );
                     break;
             }
+            break;
         case WM_RBUTTONDOWN: /* process right button */
             response = MessageBox( hwnd, "Press One:", "Right Button", MB_ABORTRETRYIGNORE );
             switch( response )
