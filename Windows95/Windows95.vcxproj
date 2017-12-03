@@ -68,10 +68,10 @@
     <ClCompile Include="MENU.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="MENU.rc" />
+    <ResourceCompile Include="MYDIALOG.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="menu.h" />
+    <ClInclude Include="mydialog.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
