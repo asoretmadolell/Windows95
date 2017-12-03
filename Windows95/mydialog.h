@@ -4,3 +4,5 @@
 
 #define IDD_RED         103
 #define IDD_GREEN       104
+#define IDD_SELFRUIT    105
+#define ID_LB1          106

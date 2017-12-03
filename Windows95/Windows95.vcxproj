@@ -65,7 +65,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MENU.cpp" />
+    <ClCompile Include="MYDIALOG.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MYDIALOG.rc" />

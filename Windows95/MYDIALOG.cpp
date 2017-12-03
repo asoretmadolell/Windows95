@@ -1,4 +1,4 @@
-/* Demonstrate a modal dialog box. */
+/* Demonstrate List Boxes */
 
 #include <Windows.h>
 //#include <string.h>
@@ -43,14 +43,14 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
     /* Now that a window class has been registered, a window can be created. */
     hwnd = CreateWindow(
         szWinName, /* name of window class */
-        "Dialog Boxes", /* title */
+        "Using a List Box", /* title */
         WS_OVERLAPPEDWINDOW, /* window style - normal */
         CW_USEDEFAULT, /* X coordinate - let Windows decide */
         CW_USEDEFAULT, /* Y coordinate - let Windows decide */
         CW_USEDEFAULT, /* width - let Windows decide */
         CW_USEDEFAULT, /* height - let Windows decide */
         NULL, /* no parent window */
-        NULL, /* Use menu registers with this class */
+        NULL, /* Use menu registered with this class */
         hThisInst, /* handle of this instance of the program */
         NULL /* no additional arguments */
         );
@@ -110,6 +110,9 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 /* A simple dialog function. */
 BOOL CALLBACK DialogFunc( HWND hdwnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
+    long i;
+    char str[ 80 ];
+
     switch( message )
     {
         case WM_COMMAND:
@@ -124,7 +127,29 @@ BOOL CALLBACK DialogFunc( HWND hdwnd, UINT message, WPARAM wParam, LPARAM lParam
                 case IDD_GREEN:
                     MessageBox( hdwnd, "You Picked Green", "GREEN", MB_OK );
                     return 1;
+                case ID_LB1: /* process a list box LBN_DBLCLK */
+                    // see if user made a selection
+                    if( HIWORD( wParam ) == LBN_DBLCLK )
+                    {
+                        i = SendDlgItemMessage( hdwnd, ID_LB1, LB_GETCURSEL, 0, 0L ); // get index
+                        sprintf( str, "Index in list is: %d", i );
+                        MessageBox( hdwnd, str, "Selection Made", MB_OK );
+                    }
+                    return 1;
+                case IDD_SELFRUIT: /* Select Fruit has been pressed */
+                    i = SendDlgItemMessage( hdwnd, ID_LB1, LB_GETCURSEL, 0, 0L ); // get index
+                    if( i > -1 ) sprintf( str, "Index in list is: %d", i );
+                    else sprintf( str, "No Fruit Selected" );
+                    MessageBox( hdwnd, str, "Selection Made", MB_OK );
+                    return 1;
             }
+            break;
+        case WM_INITDIALOG: // initialize list box
+            SendDlgItemMessage( hdwnd, ID_LB1, LB_ADDSTRING, 0, ( LPARAM )"Apple" );
+            SendDlgItemMessage( hdwnd, ID_LB1, LB_ADDSTRING, 0, ( LPARAM )"Orange" );
+            SendDlgItemMessage( hdwnd, ID_LB1, LB_ADDSTRING, 0, ( LPARAM )"Pear" );
+            SendDlgItemMessage( hdwnd, ID_LB1, LB_ADDSTRING, 0, ( LPARAM )"Grape" );
+            return 1;
     }
     return 0;
 }
