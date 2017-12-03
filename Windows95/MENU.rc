@@ -1,4 +1,4 @@
-﻿; Sample menu resource file.
+; Sample menu resource file.
 #include <Windows.h>
 #include "menu.h"
 
