@@ -118,6 +118,11 @@ BOOL CALLBACK DialogFunc( HWND hdwnd, UINT message, WPARAM wParam, LPARAM lParam
         case WM_COMMAND:
             switch( LOWORD( wParam ) )
             {
+                case IDOK: /* edit box OK button selected */
+                    /* display contents of the edit box */
+                    GetDlgItemText( hdwnd, ID_EB1, str, 80 );
+                    MessageBox( hdwnd, str, "Edit Box Contains", MB_OK );
+                    return 1;
                 case IDCANCEL:
                     EndDialog( hdwnd, 0 );
                     return 1;
