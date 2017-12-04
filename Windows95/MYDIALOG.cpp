@@ -1,4 +1,4 @@
-/* Demonstrate List Boxes */
+/* Demonstrate a modeless dialog box. */
 
 #include <Windows.h>
 //#include <string.h>
@@ -11,6 +11,8 @@ BOOL CALLBACK DialogFunc( HWND, UINT, WPARAM, LPARAM );
 char szWinName[] = "MyWin"; /* name of window class */
 
 HINSTANCE hInst;
+
+HWND hDlg; /* dialog box handle */
 
 int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, int nWinMode )
 {
@@ -43,7 +45,7 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
     /* Now that a window class has been registered, a window can be created. */
     hwnd = CreateWindow(
         szWinName, /* name of window class */
-        "Using a List Box", /* title */
+        "A Modeless Dialog Box", /* title */
         WS_OVERLAPPEDWINDOW, /* window style - normal */
         CW_USEDEFAULT, /* X coordinate - let Windows decide */
         CW_USEDEFAULT, /* Y coordinate - let Windows decide */
@@ -67,10 +69,14 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
     /* Create the message loop. */
     while( GetMessage( &msg, NULL, 0, 0 ) )
     {
-        if( !TranslateAccelerator( hwnd, hAccel, &msg ) )
+        if( !IsDialogMessage( hDlg, &msg ) )
         {
-            TranslateMessage( &msg ); /* allow use of keyboard */
-            DispatchMessage( &msg ); /* return control to Windows */
+            /* not for dialog box */
+            if( !TranslateAccelerator( hwnd, hAccel, &msg ) )
+            {
+                TranslateMessage( &msg ); /* allow use of keyboard */
+                DispatchMessage( &msg ); /* return control to Windows */
+            }
         }
     }
 
@@ -86,8 +92,8 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
         case WM_COMMAND:
             switch( LOWORD( wParam ) )
             {
-                case IDM_DIALOG1:
-                    DialogBox( hInst, "MYDB", hwnd, DialogFunc );
+                case IDM_DIALOG1: /* this creates modeless dialog box */
+                    hDlg = CreateDialog( hInst, "MYDB", hwnd, DialogFunc );
                     break;
                 case IDM_DIALOG2:
                     MessageBox( hwnd, "Dialog Not Implemented", "", MB_OK );
@@ -124,7 +130,7 @@ BOOL CALLBACK DialogFunc( HWND hdwnd, UINT message, WPARAM wParam, LPARAM lParam
                     MessageBox( hdwnd, str, "Edit Box Contains", MB_OK );
                     return 1;
                 case IDCANCEL:
-                    EndDialog( hdwnd, 0 );
+                    DestroyWindow( hdwnd );
                     return 1;
                 case IDD_RED:
                     MessageBox( hdwnd, "You Picked Red", "RED", MB_OK );
