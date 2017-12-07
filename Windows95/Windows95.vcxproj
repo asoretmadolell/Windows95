@@ -74,6 +74,7 @@
     <None Include="CURSOR.cur" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="BP.bmp" />
     <Image Include="ICON.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
