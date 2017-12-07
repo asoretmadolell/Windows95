@@ -1,4 +1,4 @@
-/* Demonstrate a custom icon and mouse cursor. */
+/* Demonstrate both a large and small icon. */
 
 #include <Windows.h>
 //#include <string.h>
@@ -12,7 +12,7 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
 {
     HWND hwnd;
     MSG msg;
-    WNDCLASS wcl;
+    WNDCLASSEX wcl; /* must use WNDCLASSEX to set small icon */
 
     /* Define a window class. */
     wcl.hInstance = hThisInst; /* handle to this instance */
@@ -20,7 +20,12 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
     wcl.lpfnWndProc = WindowFunc; /* window function */
     wcl.style = 0; /* default style */
 
+    wcl.cbSize = sizeof( WNDCLASSEX ); /* set size of WNDCLASSEX */
+
+    /* load both big and small icons */
     wcl.hIcon = LoadIcon( hThisInst, "MYICON" ); /* load icon */
+    wcl.hIconSm = LoadIcon( NULL, IDI_APPLICATION ); /* small icon */
+
     wcl.hCursor = LoadCursor( hThisInst, "MYCURSOR" ); /* load cursor */
 
     wcl.lpszMenuName = NULL; /* no main menu */
@@ -32,7 +37,7 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
     wcl.hbrBackground = (HBRUSH)GetStockObject( WHITE_BRUSH );
 
     /* Register the window class. */
-    if( !RegisterClass( &wcl ) ) return 0;
+    if( !RegisterClassEx( &wcl ) ) return 0;
 
     /* Now that a window class has been registered, a window can be created. */
     hwnd = CreateWindow(
