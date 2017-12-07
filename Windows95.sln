@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Windows95", "Windows95\Windows95.vcxproj", "{9D9F55F7-8735-4146-AD79-E09EE2BBA734}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Bitmaps", "Bitmaps\Bitmaps.vcxproj", "{9D9F55F7-8735-4146-AD79-E09EE2BBA734}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{77351F2E-190A-4D42-AB76-7841C088776F}"
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Controls2", "Controls2\Controls2.vcxproj", "{04B92163-71EC-44DA-856C-A19287DFD00E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{9D9F55F7-8735-4146-AD79-E09EE2BBA734}.Debug|Win32.Build.0 = Debug|Win32
 		{9D9F55F7-8735-4146-AD79-E09EE2BBA734}.Release|Win32.ActiveCfg = Release|Win32
 		{9D9F55F7-8735-4146-AD79-E09EE2BBA734}.Release|Win32.Build.0 = Release|Win32
+		{04B92163-71EC-44DA-856C-A19287DFD00E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{04B92163-71EC-44DA-856C-A19287DFD00E}.Debug|Win32.Build.0 = Debug|Win32
+		{04B92163-71EC-44DA-856C-A19287DFD00E}.Release|Win32.ActiveCfg = Release|Win32
+		{04B92163-71EC-44DA-856C-A19287DFD00E}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
