@@ -65,13 +65,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MYDIALOG.cpp" />
+    <ClCompile Include="MYICON.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="MYDIALOG.rc" />
+    <ResourceCompile Include="RESOURCE.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="mydialog.h" />
+    <None Include="CURSOR.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="ICON.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
