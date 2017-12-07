@@ -1,4 +1,4 @@
-/* Demonstrate a bitmap. */
+/* Demonstrate two bitmaps. */
 
 #include <Windows.h>
 //#include <string.h>
@@ -8,7 +8,7 @@ LRESULT CALLBACK WindowFunc( HWND, UINT, WPARAM, LPARAM );
 
 char szWinName[] = "MyWin"; /* name of window class */
 
-HBITMAP hBit1; /* handle of bitmap */
+HBITMAP hBit1, hBit2; /* handle of bitmaps */
 
 int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, int nWinMode )
 {
@@ -39,7 +39,7 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
     /* Now that a window class has been registered, a window can be created. */
     hwnd = CreateWindow(
         szWinName, /* name of window class */
-        "Custom Bitmap", /* title */
+        "Two Custom Bitmaps", /* title */
         WS_OVERLAPPEDWINDOW, /* window style - normal */
         CW_USEDEFAULT, /* X coordinate - let Windows decide */
         CW_USEDEFAULT, /* Y coordinate - let Windows decide */
@@ -55,8 +55,9 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
     ShowWindow( hwnd, nWinMode );
     UpdateWindow( hwnd );
 
-    /* load the bitmap */
+    /* load the bitmaps */
     hBit1 = LoadBitmap( hThisInst, "MYBP1" ); /* load bitmap */
+    hBit2 = LoadBitmap( hThisInst, "MYBP2" ); /* load bitmap */
 
     /* Create the message loop. */
     while( GetMessage( &msg, NULL, 0, 0 ) )
@@ -76,7 +77,7 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 
     switch( message )
     {
-        case WM_LBUTTONDOWN:
+        case WM_LBUTTONDOWN: /* display the first bitmap */
             DC = GetDC( hwnd ); /* get device context */
             memDC = CreateCompatibleDC( DC ); /* create compatible DC */
             SelectObject( memDC, hBit1 );
@@ -84,8 +85,17 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
             ReleaseDC( hwnd, DC ); /* free the device context */
             DeleteDC( memDC ); /* free the memory context */
             break;
+        case WM_RBUTTONDOWN:
+            DC = GetDC( hwnd ); /* get device context */
+            memDC = CreateCompatibleDC( DC ); /* create compatible DC */
+            SelectObject( memDC, hBit2 );
+            BitBlt( DC, LOWORD( lParam ), HIWORD( lParam ), 64, 64, memDC, 0, 0, SRCCOPY ); /* build image */
+            ReleaseDC( hwnd, DC ); /* free the device context */
+            DeleteDC( memDC ); /* free the memory context */
+            break;
         case WM_DESTROY: /* terminate the program */
-            DeleteObject( hBit1 ); /* remove the bitmap */
+            DeleteObject( hBit1 ); /* remove the bitmaps */
+            DeleteObject( hBit2 );
             PostQuitMessage( 0 );
             break;
         default:
