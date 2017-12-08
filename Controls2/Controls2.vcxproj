@@ -78,6 +78,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CONTROLS2.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CONTROLS2.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="controls2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
