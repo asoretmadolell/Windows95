@@ -1,31 +1,23 @@
+; Demonstrate a scroll bar.
 #include "stdctls3.h"
 #include <Windows.h>
 
 MYMENU MENU
 {
-    MENUITEM "&Dialog", ID_DIALOG1
-    MENUITEM "&Status", ID_STATUS
-    MENUITEM "&Help", ID_HELP
+    MENUITEM "&Scroll Bar", IDM_DIALOG1
+    MENUITEM "&Help", IDM_HELP
 }
 
 MYMENU ACCELERATORS
 {
-    VK_F2, ID_DIALOG1, VIRTKEY
-    VK_F3, ID_STATUS, VIRTKEY
-    VK_F1, ID_HELP, VIRTKEY
+    VK_F2, IDM_DIALOG1, VIRTKEY
+    VK_F1, IDM_HELP, VIRTKEY
 }
 
 MYDB DIALOG 18, 18, 142, 92
-CAPTION "Test Dialog Box"
+CAPTION "Using a Scroll Bar"
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 {
-    PUSHBUTTON "OK", IDOK, 77, 40, 30, 13, WS_CHILD | WS_VISIBLE | WS_TABSTOP
-    PUSHBUTTON "Cancel", IDCANCEL, 74, 65, 37, 14, WS_CHILD | WS_VISIBLE | WS_TABSTOP
-    CHECKBOX "Checkbox 1", ID_CB1, 3, 10, 48, 12
-    AUTOCHECKBOX "Checkbox 2", ID_CB2, 3, 22, 48, 12
-    GROUPBOX "Checkboxes", ID_GB1, 1, 1, 51, 34
-    CTEXT "This is text", ID_CT1, 1, 44, 50, 24
-    AUTORADIOBUTTON "Radio 1", ID_RB1, 60, 10, 48, 12
-    AUTORADIOBUTTON "Radio 2", ID_RB2, 60, 22, 48, 12
-    GROUPBOX "Radio Group", ID_GB2, 58, 1, 51, 34
+    GROUPBOX "Thumb Position", ID_GB1, 1, 1, 60, 30
+    SCROLLBAR ID_SB1, 130, 10, 10, 70, SBS_VERT | WS_TABSTOP
 }

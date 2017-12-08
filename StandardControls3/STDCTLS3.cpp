@@ -1,19 +1,18 @@
-/* Demonstrate radio buttons. */
+/* Demonstrate A Scroll Bar */
 
 #include <Windows.h>
 //#include <string.h>
 #include <stdio.h>
 #include "stdctls3.h"
 
+#define RANGEMAX 50
+
 LRESULT CALLBACK WindowFunc( HWND, UINT, WPARAM, LPARAM );
-LRESULT CALLBACK DialogFunc( HWND, UINT, WPARAM, LPARAM );
+BOOL CALLBACK DialogFunc( HWND, UINT, WPARAM, LPARAM );
 
 char szWinName[] = "MyWin"; /* name of window class */
 
 HINSTANCE hInst;
-
-int cbstatus1 = 0, cbstatus2 = 0; /* holds status of check boxes */
-int rbstatus1 = 1, rbstatus2 = 0; /* holds status of radio buttons */
 
 int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, int nWinMode )
 {
@@ -46,7 +45,7 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
     /* Now that a window class has been registered, a window can be created. */
     hwnd = CreateWindow(
         szWinName, /* name of window class */
-        "Try Radio Buttons", /* title */
+        "Using a Scroll Bar", /* title */
         WS_OVERLAPPEDWINDOW, /* window style - normal */
         CW_USEDEFAULT, /* X coordinate - let Windows decide */
         CW_USEDEFAULT, /* Y coordinate - let Windows decide */
@@ -84,29 +83,16 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
 
 LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
-    char str[ 255 ];
-
     switch( message )
     {
         case WM_COMMAND:
             switch( LOWORD( wParam ) )
             {
-                case ID_DIALOG1:
-                    DialogBox( hInst, "MYDB", hwnd, (DLGPROC)DialogFunc );
+                case IDM_DIALOG1:
+                    DialogBox( hInst, "MYDB", hwnd, DialogFunc );
                     break;
-                case ID_STATUS:
-                    if( cbstatus1 ) strcpy( str, "Checkbox 1 is checked\n" );
-                    else strcpy( str, "Checkbox 1 is not checked\n" );
-                    if( cbstatus2 ) strcat( str, "Checkbox 2 is checked\n" );
-                    else strcat( str, "Checkbox 2 is not checked\n" );
-                    if( rbstatus1 ) strcat( str, "Radio 1 is checked\n" );
-                    else strcat( str, "Radio 1 is not checked\n" );
-                    if( rbstatus2 ) strcat( str, "Radio 2 is checked\n" );
-                    else strcat( str, "Radio 2 is not checked\n" );
-                    MessageBox( hwnd, str, "", MB_OK );
-                    break;
-                case ID_HELP:
-                    MessageBox( hwnd, "Help", "", MB_OK );
+                case IDM_HELP:
+                    MessageBox( hwnd, "Help", "Use the Scroll Bar", MB_OK );
                     break;
             }
             break;
@@ -121,40 +107,84 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 }
 
 /* A simple dialog function. */
-LRESULT CALLBACK DialogFunc( HWND hdwnd, UINT message, WPARAM wParam, LPARAM lParam )
+BOOL CALLBACK DialogFunc( HWND hdwnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
+    char str[ 80 ];
+    static int pos = 0; /* slider box position */
+
+    HDC hdc;
+
     switch( message )
     {
-        case WM_INITDIALOG:
-            /* The dialog box has just been displayed. Set the check boxes and radio buttons appropriately. */
-            SendDlgItemMessage( hdwnd, ID_CB1, BM_SETCHECK, cbstatus1, 0 );
-            SendDlgItemMessage( hdwnd, ID_CB2, BM_SETCHECK, cbstatus2, 0 );
-            SendDlgItemMessage( hdwnd, ID_RB1, BM_SETCHECK, rbstatus1, 0 );
-            SendDlgItemMessage( hdwnd, ID_RB2, BM_SETCHECK, rbstatus2, 0 );
-            return 1;
         case WM_COMMAND:
             switch( LOWORD( wParam ) )
             {
                 case IDCANCEL:
                     EndDialog( hdwnd, 0 );
                     return 1;
-                case IDOK:
-                    /* update global checkbox status variables */
-                    cbstatus1 = SendDlgItemMessage( hdwnd, ID_CB1, BM_GETCHECK, 0, 0 ); // is box checked?
-                    cbstatus2 = SendDlgItemMessage( hdwnd, ID_CB2, BM_GETCHECK, 0, 0 ); // is box checked?
-
-                    /*now, update global radio button status variables */
-                    rbstatus1 = SendDlgItemMessage( hdwnd, ID_RB1, BM_GETCHECK, 0, 0 ); // is button checked?
-                    rbstatus2 = SendDlgItemMessage( hdwnd, ID_RB2, BM_GETCHECK, 0, 0 ); // is button checked?
-
-                    EndDialog( hdwnd, 0 );
+            }
+            break;
+        case WM_VSCROLL:
+            SetScrollRange( (HWND)lParam, SB_CTL, 0, RANGEMAX, 1 );
+            switch( LOWORD( wParam ) )
+            {
+                case SB_LINEDOWN:
+                    pos++;
+                    if( pos > RANGEMAX ) pos = RANGEMAX;
+                    SetScrollPos( (HWND)lParam, SB_CTL, pos, 1 );
+                    hdc = GetDC( hdwnd );
+                    sprintf( str, "%d", pos );
+                    TextOut( hdc, 55, 30, "    ", 4 );
+                    TextOut( hdc, 55, 30, str, strlen( str ) );
+                    ReleaseDC( hdwnd, hdc );
                     return 1;
-                case ID_CB1: /* This is a manually managed check box. */
-                    /* user selected 1st check box, so change its state */
-                    if( !SendDlgItemMessage( hdwnd, ID_CB1, BM_GETCHECK, 1, 0 ) )
-                        SendDlgItemMessage( hdwnd, ID_CB1, BM_SETCHECK, 1, 0 );
-                    else /* turn it off */
-                        SendDlgItemMessage( hdwnd, ID_CB1, BM_SETCHECK, 0, 0 );
+                case SB_LINEUP:
+                    pos--;
+                    if( pos < 0 ) pos = 0;
+                    SetScrollPos( (HWND)lParam, SB_CTL, pos, 1 );
+                    hdc = GetDC( hdwnd );
+                    sprintf( str, "%d", pos );
+                    TextOut( hdc, 55, 30, "    ", 4 );
+                    TextOut( hdc, 55, 30, str, strlen( str ) );
+                    ReleaseDC( hdwnd, hdc );
+                    return 1;
+                case SB_THUMBPOSITION:
+                    pos = HIWORD(wParam); /* get current position */
+                    SetScrollPos( (HWND)lParam, SB_CTL, pos, 1 );
+                    hdc = GetDC( hdwnd );
+                    sprintf( str, "%d", pos );
+                    TextOut( hdc, 55, 30, "    ", 4 );
+                    TextOut( hdc, 55, 30, str, strlen( str ) );
+                    ReleaseDC( hdwnd, hdc );
+                    return 1;
+                case SB_THUMBTRACK:
+                    pos = HIWORD( wParam ); /* get current position */
+                    SetScrollPos( (HWND)lParam, SB_CTL, pos, 1 );
+                    hdc = GetDC( hdwnd );
+                    sprintf( str, "%d", pos );
+                    TextOut( hdc, 55, 30, "    ", 4 );
+                    TextOut( hdc, 55, 30, str, strlen( str ) );
+                    ReleaseDC( hdwnd, hdc );
+                    return 1;
+                case SB_PAGEDOWN:
+                    pos += 5;
+                    if( pos > RANGEMAX ) pos = RANGEMAX;
+                    SetScrollPos( (HWND)lParam, SB_CTL, pos, 1 );
+                    hdc = GetDC( hdwnd );
+                    sprintf( str, "%d", pos );
+                    TextOut( hdc, 55, 30, "    ", 4 );
+                    TextOut( hdc, 55, 30, str, strlen( str ) );
+                    ReleaseDC( hdwnd, hdc );
+                    return 1;
+                case SB_PAGEUP:
+                    pos -= 5;
+                    if( pos < 0 ) pos = 0;
+                    SetScrollPos( (HWND)lParam, SB_CTL, pos, 1 );
+                    hdc = GetDC( hdwnd );
+                    sprintf( str, "%d", pos );
+                    TextOut( hdc, 55, 30, "    ", 4 );
+                    TextOut( hdc, 55, 30, str, strlen( str ) );
+                    ReleaseDC( hdwnd, hdc );
                     return 1;
             }
     }
