@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9D9F55F7-8735-4146-AD79-E09EE2BBA734}</ProjectGuid>
-    <RootNamespace>Windows95</RootNamespace>
+    <RootNamespace>Bitmaps</RootNamespace>
     <ProjectName>Bitmaps</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
