@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StandardControls2", "Standa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StandardControls3", "StandardControls3\StandardControls3.vcxproj", "{BCD739DA-27D7-4235-A988-0E74258ECADF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Text", "Text\Text.vcxproj", "{E533C476-5CF7-400A-9E33-A08BC186E076}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -33,6 +35,10 @@ Global
 		{BCD739DA-27D7-4235-A988-0E74258ECADF}.Debug|Win32.Build.0 = Debug|Win32
 		{BCD739DA-27D7-4235-A988-0E74258ECADF}.Release|Win32.ActiveCfg = Release|Win32
 		{BCD739DA-27D7-4235-A988-0E74258ECADF}.Release|Win32.Build.0 = Release|Win32
+		{E533C476-5CF7-400A-9E33-A08BC186E076}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E533C476-5CF7-400A-9E33-A08BC186E076}.Debug|Win32.Build.0 = Debug|Win32
+		{E533C476-5CF7-400A-9E33-A08BC186E076}.Release|Win32.ActiveCfg = Release|Win32
+		{E533C476-5CF7-400A-9E33-A08BC186E076}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
