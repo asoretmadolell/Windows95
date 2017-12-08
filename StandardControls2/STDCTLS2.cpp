@@ -3,7 +3,7 @@
 #include <Windows.h>
 //#include <string.h>
 #include <stdio.h>
-#include "controls2.h"
+#include "stdctls2.h"
 
 LRESULT CALLBACK WindowFunc( HWND, UINT, WPARAM, LPARAM );
 LRESULT CALLBACK DialogFunc( HWND, UINT, WPARAM, LPARAM );

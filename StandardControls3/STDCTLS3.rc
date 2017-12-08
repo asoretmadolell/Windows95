@@ -1,4 +1,4 @@
-#include "controls2.h"
+#include "stdctls3.h"
 #include <Windows.h>
 
 MYMENU MENU

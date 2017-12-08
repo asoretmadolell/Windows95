@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{04B92163-71EC-44DA-856C-A19287DFD00E}</ProjectGuid>
+    <ProjectGuid>{BCD739DA-27D7-4235-A988-0E74258ECADF}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Controls2</RootNamespace>
+    <RootNamespace>StandardControls3</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -78,13 +78,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CONTROLS2.cpp" />
+    <ClCompile Include="STDCTLS3.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="CONTROLS2.rc" />
+    <ResourceCompile Include="STDCTLS3.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="controls2.h" />
+    <ClInclude Include="stdctls3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
