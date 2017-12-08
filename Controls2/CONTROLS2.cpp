@@ -1,4 +1,4 @@
-/* Demonstrate check boxes. */
+/* Demonstrates check boxes with enhancements. */
 
 #include <Windows.h>
 //#include <string.h>
@@ -120,6 +120,11 @@ LRESULT CALLBACK DialogFunc( HWND hdwnd, UINT message, WPARAM wParam, LPARAM lPa
 {
     switch( message )
     {
+        case WM_INITDIALOG:
+            /* The dialog box has just been displayed. Set the check boxes appropriately. */
+            SendDlgItemMessage( hdwnd, ID_CB1, BM_SETCHECK, status1, 0 );
+            SendDlgItemMessage( hdwnd, ID_CB2, BM_SETCHECK, status2, 0 );
+            return 1;
         case WM_COMMAND:
             switch( LOWORD( wParam ) )
             {
@@ -132,9 +137,12 @@ LRESULT CALLBACK DialogFunc( HWND hdwnd, UINT message, WPARAM wParam, LPARAM lPa
                     status2 = SendDlgItemMessage( hdwnd, ID_CB2, BM_GETCHECK, 0, 0 ); // is box checked?
                     EndDialog( hdwnd, 0 );
                     return 1;
-                case ID_CB1:
-                    /* user selected 1st check box, so check it */
-                    SendDlgItemMessage( hdwnd, ID_CB1, BM_SETCHECK, 1, 0 );
+                case ID_CB1: /* This is a manually managed check box. */
+                    /* user selected 1st check box, so change its state */
+                    if( !SendDlgItemMessage( hdwnd, ID_CB1, BM_GETCHECK, 1, 0 ) )
+                        SendDlgItemMessage( hdwnd, ID_CB1, BM_SETCHECK, 1, 0 );
+                    else /* turn it off */
+                        SendDlgItemMessage( hdwnd, ID_CB1, BM_SETCHECK, 0, 0 );
                     return 1;
             }
     }
