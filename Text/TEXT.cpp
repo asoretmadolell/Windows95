@@ -1,4 +1,4 @@
-/* Demonstrate A Scroll Bar */
+/* Repaint using a virtual window. */
 
 #include <Windows.h>
 //#include <string.h>
@@ -13,6 +13,10 @@ char str[ 255 ]; /* holds output strings */
 
 int X = 0, Y = 0; /* current output location */
 int maxX, maxY; /* screen dimensions */
+
+HDC memdc; /* store the virtual device handle */
+HBITMAP hbit; /* store the virtual bitmap */
+HBRUSH hbrush; /* store the brush handle */
 
 int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, int nWinMode )
 {
@@ -82,6 +86,7 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
 LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
     HDC hdc;
+    PAINTSTRUCT paintstruct;
     TEXTMETRIC tm;
     SIZE size;
 
@@ -91,50 +96,69 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
             /* get creen coordinates */
             maxX = GetSystemMetrics( SM_CXSCREEN );
             maxY = GetSystemMetrics( SM_CYSCREEN );
+
+            /* make a compatible memory image */
+            hdc = GetDC( hwnd );
+            memdc = CreateCompatibleDC( hdc );
+            hbit = CreateCompatibleBitmap( hdc, maxX, maxY );
+            SelectObject( memdc, hbit );
+            hbrush = (HBRUSH)GetStockObject( WHITE_BRUSH );
+            SelectObject( memdc, hbrush );
+            PatBlt( memdc, 0, 0, maxX, maxY, PATCOPY );
+            ReleaseDC( hwnd, hdc );
             break;
         case WM_COMMAND:
             switch( LOWORD( wParam ) )
             {
                 case ID_SHOW:
-                    hdc = GetDC( hwnd ); /* get device context */
-
                     /* set text color to black */
-                    SetTextColor( hdc, RGB( 0, 0, 0 ) );
-                    /* set background color to turquoise */
-                    SetBkColor( hdc, RGB( 0, 255, 255 ) );
+                    SetTextColor( memdc, RGB( 0, 0, 0 ) );
+                    /* set background mode to transparent */
+                    SetBkMode( memdc, TRANSPARENT );
 
                     /* get text metrics */
-                    GetTextMetrics( hdc, &tm );
+                    GetTextMetrics( memdc, &tm );
 
                     sprintf( str, "The font is %ld pixels high.", tm.tmHeight );
-                    TextOut( hdc, X, Y, str, strlen( str ) ); /* output string */
+                    TextOut( memdc, X, Y, str, strlen( str ) ); /* output string */
                     Y = Y + tm.tmHeight + tm.tmExternalLeading; /* next line */
 
                     strcpy( str, "This is on the next line. " );
-                    TextOut( hdc, X, Y, str, strlen( str ) ); /* output string */
+                    TextOut( memdc, X, Y, str, strlen( str ) ); /* output string */
 
                     /* compute length of a string */
-                    GetTextExtentPoint32( hdc, str, strlen( str ), &size );
+                    GetTextExtentPoint32( memdc, str, strlen( str ), &size );
                     sprintf( str, "Previous string is %ld units long", size.cx );
                     X = size.cx; /* advance to end of previous string */
-                    TextOut( hdc, X, Y, str, strlen( str ) );
+                    TextOut( memdc, X, Y, str, strlen( str ) );
                     Y = Y + tm.tmHeight + tm.tmExternalLeading; /* next line */
                     X = 0; /* reset X */
 
                     sprintf( str, "Screen dimensions: %d %d", maxX, maxY );
-                    TextOut( hdc, X, Y, str, strlen( str ) );
+                    TextOut( memdc, X, Y, str, strlen( str ) );
                     Y = Y + tm.tmHeight + tm.tmExternalLeading; /* next line */
-                    ReleaseDC( hwnd, hdc ); /* Release DC */
+                    InvalidateRect( hwnd, NULL, 1 );
                     break;
                 case ID_RESET:
                     X = Y = 0;
+                    /* erase by repainting background */
+                    PatBlt( memdc, 0, 0, maxX, maxY, PATCOPY );
+                    InvalidateRect( hwnd, NULL, 1 );
                     break;
                 case ID_HELP:
                     MessageBox( hwnd, "F2: Display\nF3: Reset", "Help", MB_OK );
                     break;
             }
             break;
+        case WM_PAINT: /* process a repaint request */
+            hdc = BeginPaint( hwnd, &paintstruct ); /* get DC */
+
+            /* now, copy memory image onto screen */
+            BitBlt( hdc, 0, 0, maxX, maxY, memdc, 0, 0, SRCCOPY );
+            EndPaint( hwnd, &paintstruct ); /* release DC */
+            break;
         case WM_DESTROY: /* terminate the program */
+            DeleteDC( memdc ); /* delete the memory device */
             PostQuitMessage( 0 );
             break;
         default:
