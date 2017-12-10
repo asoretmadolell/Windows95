@@ -1,4 +1,4 @@
-/* Demonstrate built-in fonts. */
+/* Create a custom font. */
 
 #include <Windows.h>
 //#include <string.h>
@@ -10,6 +10,7 @@ LRESULT CALLBACK WindowFunc( HWND, UINT, WPARAM, LPARAM );
 char szWinName[] = "MyWin"; /* name of window class */
 
 char str[ 255 ]; /* holds output strings */
+char fname[ 40 ] = "Default"; /* name of font */
 
 int X = 0, Y = 0; /* current output location */
 int maxX, maxY; /* screen dimensions */
@@ -17,7 +18,7 @@ int maxX, maxY; /* screen dimensions */
 HDC memdc; /* store the virtual device handle */
 HBITMAP hbit; /* store the virtual bitmap */
 HBRUSH hbrush; /* store the brush handle */
-HFONT holdf, hnewf; /* store the font handles */
+HFONT holdf, hnewf1, hnewf2; /* store the font handles */
 
 int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, int nWinMode )
 {
@@ -108,8 +109,9 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
             SelectObject( memdc, hbrush );
             PatBlt( memdc, 0, 0, maxX, maxY, PATCOPY );
 
-            /* get new font */
-            hnewf = (HFONT)GetStockObject( ANSI_VAR_FONT );
+            /* create a new font */
+            hnewf1 = CreateFont( 14, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Courier New" );
+            hnewf2 = CreateFont( 20, 0, 0, 0, FW_SEMIBOLD, 0, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Century Gothic" );
 
             ReleaseDC( hwnd, hdc );
             break;
@@ -124,7 +126,7 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                     /* get text metrics */
                     GetTextMetrics( memdc, &tm );
 
-                    sprintf( str, "The font is %ld pixels high.", tm.tmHeight );
+                    sprintf( str, "%s font is %ld pixels high.", fname, tm.tmHeight );
                     TextOut( memdc, X, Y, str, strlen( str ) ); /* output string */
                     Y = Y + tm.tmHeight + tm.tmExternalLeading; /* next line */
 
@@ -151,15 +153,22 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                     InvalidateRect( hwnd, NULL, 1 );
                     break;
                 case ID_FONT:
-                    if( !fontswitch ) /* switch to new font */
+                    switch( fontswitch )
                     {
-                        holdf = (HFONT)SelectObject( memdc, hnewf );
-                        fontswitch = 1;
-                    }
-                    else /* switch to old font */
-                    {
-                        SelectObject( memdc, holdf );
-                        fontswitch = 0;
+                        case 0: /* switch to new font1 */
+                            holdf = (HFONT)SelectObject( memdc, hnewf1 );
+                            fontswitch = 1;
+                            strcpy( fname, "Courier New" );
+                            break;
+                        case 1: /* switch to new font2 */
+                            SelectObject( memdc, hnewf2 );
+                            fontswitch = 2;
+                            strcpy( fname, "Century Gothic" );
+                            break;
+                        default: /* switch to old font */
+                            SelectObject( memdc, holdf );
+                            fontswitch = 0;
+                            strcpy( fname, "Default" );
                     }
                     break;
                 case ID_HELP:
@@ -175,7 +184,9 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
             EndPaint( hwnd, &paintstruct ); /* release DC */
             break;
         case WM_DESTROY: /* terminate the program */
-            DeleteDC( memdc ); /* delete the memory device */
+            DeleteDC( memdc );
+            DeleteObject( hnewf1 );
+            DeleteObject( hnewf2 );
             PostQuitMessage( 0 );
             break;
         default:
