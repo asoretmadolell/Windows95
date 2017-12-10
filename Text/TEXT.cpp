@@ -1,4 +1,4 @@
-/* Repaint using a virtual window. */
+/* Demonstrate built-in fonts. */
 
 #include <Windows.h>
 //#include <string.h>
@@ -17,6 +17,7 @@ int maxX, maxY; /* screen dimensions */
 HDC memdc; /* store the virtual device handle */
 HBITMAP hbit; /* store the virtual bitmap */
 HBRUSH hbrush; /* store the brush handle */
+HFONT holdf, hnewf; /* store the font handles */
 
 int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, int nWinMode )
 {
@@ -87,8 +88,9 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 {
     HDC hdc;
     PAINTSTRUCT paintstruct;
-    TEXTMETRIC tm;
+    static TEXTMETRIC tm;
     SIZE size;
+    static int fontswitch = 0;
 
     switch( message )
     {
@@ -97,7 +99,7 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
             maxX = GetSystemMetrics( SM_CXSCREEN );
             maxY = GetSystemMetrics( SM_CYSCREEN );
 
-            /* make a compatible memory image */
+            /* make a compatible memory image device */
             hdc = GetDC( hwnd );
             memdc = CreateCompatibleDC( hdc );
             hbit = CreateCompatibleBitmap( hdc, maxX, maxY );
@@ -105,15 +107,18 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
             hbrush = (HBRUSH)GetStockObject( WHITE_BRUSH );
             SelectObject( memdc, hbrush );
             PatBlt( memdc, 0, 0, maxX, maxY, PATCOPY );
+
+            /* get new font */
+            hnewf = (HFONT)GetStockObject( ANSI_VAR_FONT );
+
             ReleaseDC( hwnd, hdc );
             break;
         case WM_COMMAND:
             switch( LOWORD( wParam ) )
             {
                 case ID_SHOW:
-                    /* set text color to black */
+                    /* set text color to black and mode to transparent */
                     SetTextColor( memdc, RGB( 0, 0, 0 ) );
-                    /* set background mode to transparent */
                     SetBkMode( memdc, TRANSPARENT );
 
                     /* get text metrics */
@@ -145,8 +150,20 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                     PatBlt( memdc, 0, 0, maxX, maxY, PATCOPY );
                     InvalidateRect( hwnd, NULL, 1 );
                     break;
+                case ID_FONT:
+                    if( !fontswitch ) /* switch to new font */
+                    {
+                        holdf = (HFONT)SelectObject( memdc, hnewf );
+                        fontswitch = 1;
+                    }
+                    else /* switch to old font */
+                    {
+                        SelectObject( memdc, holdf );
+                        fontswitch = 0;
+                    }
+                    break;
                 case ID_HELP:
-                    MessageBox( hwnd, "F2: Display\nF3: Reset", "Help", MB_OK );
+                    MessageBox( hwnd, "F2: Display\nF3: Change font\nF4: Reset", "Text Fun", MB_OK );
                     break;
             }
             break;
