@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{9D9F55F7-8735-4146-AD79-E09EE2BBA734}</ProjectGuid>
-    <RootNamespace>Bitmaps</RootNamespace>
-    <ProjectName>Bitmaps</ProjectName>
+    <ProjectGuid>{CE785850-5615-4E57-96E1-7594276AF8C8}</ProjectGuid>
+    <RootNamespace>Graphics</RootNamespace>
+    <ProjectName>Graphics</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -66,18 +66,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BITMAPS.cpp" />
+    <ClCompile Include="GRAPH.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="RESOURCE.rc" />
+    <ResourceCompile Include="GRAPH.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="CURSOR.cur" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="BP.bmp" />
-    <Image Include="BP2.bmp" />
-    <Image Include="ICON.ico" />
+    <ClInclude Include="graph.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
