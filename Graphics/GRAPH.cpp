@@ -1,4 +1,4 @@
-/* Demonstrate the basic graphics functions. */
+/* Set the mapping mode, the window and the viewport extents. */
 
 #include <Windows.h>
 //#include <string.h>
@@ -12,6 +12,9 @@ char szWinName[] = "MyWin"; /* name of window class */
 char str[ 255 ]; /* holds output strings */
 
 int maxX, maxY; /* screen dimensions */
+
+int X = 10, Y = 10; /* viewport extents */
+int orgX = 0, orgY = 0; /* viewport origin */
 
 HDC memdc; /* handle of memory DC */
 HBITMAP hbit; /* handle of compatible bitmap */
@@ -52,7 +55,7 @@ int WINAPI WinMain( HINSTANCE hThisInst, HINSTANCE hPreviInst, LPSTR lpszArgs, i
     /* Now that a window class has been registered, a window can be created. */
     hwnd = CreateWindow(
         szWinName, /* name of window class */
-        "Fun with Graphics", /* title */
+        "Changing Mapping Modes", /* title */
         WS_OVERLAPPEDWINDOW, /* window style - normal */
         CW_USEDEFAULT, /* X coordinate - let Windows decide */
         CW_USEDEFAULT, /* Y coordinate - let Windows decide */
@@ -201,6 +204,16 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
 
                     InvalidateRect( hwnd, NULL, 1 );
                     break;
+                case ID_SIZE: /* increment size by 10 each time */
+                    X += 10;
+                    Y += 10;
+                    InvalidateRect( hwnd, NULL, 1 );
+                    break;
+                case ID_ORG: /* change viewport origin */
+                    orgX += 50;
+                    orgY += 50;
+                    InvalidateRect( hwnd, NULL, 1 );
+                    break;
                 case ID_RESET:
                     /* reset current position to 0,0 */
                     MoveToEx( memdc, 0, 0, NULL );
@@ -209,12 +222,18 @@ LRESULT CALLBACK WindowFunc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lPar
                     InvalidateRect( hwnd, NULL, 1 );
                     break;
                 case ID_HELP:
-                    MessageBox( hwnd, "F2: Lines\nF3: Rectangles\nF4: Ellipses\nF5: Reset", "Graphics Fun", MB_OK );
+                    MessageBox( hwnd, "F2: Lines\nF3: Rectangles\nF4: Ellipses\nF5: Magnify\nF6: Origin\nF7: Reset", "Graphics Fun", MB_OK );
                     break;
             }
             break;
         case WM_PAINT: /* process a repaint request */
             hdc = BeginPaint( hwnd, &paintstruct ); /* get DC */
+
+            /* set mapping mode, window and viewport extents */
+            SetMapMode( hdc, MM_ANISOTROPIC );
+            SetWindowExtEx( hdc, 200, 200, NULL );
+            SetViewportExtEx( hdc, X, Y, NULL );
+            SetViewportOrgEx( hdc, orgX, orgY, NULL );
 
             /* now, copy memory image onto screen */
             BitBlt( hdc, 0, 0, maxX, maxY, memdc, 0, 0, SRCCOPY );
